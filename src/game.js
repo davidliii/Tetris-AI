@@ -3,14 +3,28 @@ class Game {
         this.grid_width = 10;
         this.grid_height = 22;
         this.grid = this.makeGrid();
+
+        this.current_piece = new I_Piece();
+        this.next_piece;
     }
 
     update() {
+        let dx = keys[3] - keys[2];
+        let dy = keys[1];
+        let rotate_dir = keys[0]
+        
+
         for (let i = 0; i < this.grid.length; ++i) {
             for (let j = 0; j < this.grid[i].length; ++j) {
                 this.grid[i][j].update();
             }
         }
+        
+        this.current_piece.update(dx, dy, rotate_dir, this.grid_width, this.grid_height);
+        if (!this.checkValid()) {
+            this.current_piece.update(-dx, -dy, -rotate_dir, this.grid_width, this.grid_height);
+        }
+        keys = [0, 0, 0, 0];
     }
 
     show() {
@@ -19,6 +33,8 @@ class Game {
                 this.grid[i][j].show();
             }
         }
+
+        this.current_piece.show();
     }
 
     makeGrid() {
@@ -35,6 +51,24 @@ class Game {
 
         return grid;
     }
+
+    checkValid() {
+        let cfg = this.current_piece.cfgs[this.current_piece.current_cfg_idx];
+        for (let i = 0; i < cfg.length; ++i) {
+            let x = cfg[i][0] + this.current_piece.x;
+            let y = cfg[i][1] + this.current_piece.y;
+
+            if (x >= this.grid_width || x <= -1) {
+                return false;
+            }
+
+            if (y >= this.grid_height) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 
 class GridSpace {
@@ -42,22 +76,15 @@ class GridSpace {
         this.x = x;
         this.y = y;
         this.color = background_color;
-        this.grid_line_color = grid_line_color;
     }
 
     update() {
-        if (this.color == background_color) {
-            this.grid_line_color = grid_line_color;
-        }
-
-        else {
-            this.grid_line_color = background_color;
-        }
+        return;
     }
 
     show() {
         strokeWeight(grid_line_width);
-        stroke(this.grid_line_color);
+        stroke(grid_line_color);
         fill(this.color);
         square(this.x * block_size + grid_line_width, 
                this.y * block_size + grid_line_width, 
