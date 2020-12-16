@@ -30,6 +30,20 @@ class Piece {
         }
     }
 
+    project(px, py) {
+        let cfg = this.cfgs[this.current_cfg_idx];
+        for (let i = 0; i < cfg.length; ++i) {
+            let x = cfg[i][0];
+            let y = cfg[i][1];
+            strokeWeight(grid_line_width);
+            stroke(grid_line_color);
+            fill(projection_color);
+            square((px + x) * block_size + grid_line_width, 
+                   (py + y) * block_size + grid_line_width, 
+                   block_size);
+        }
+    }
+
     rotate(direction) {
         this.current_cfg_idx += direction;
         if (this.current_cfg_idx >= this.cfgs.length) {

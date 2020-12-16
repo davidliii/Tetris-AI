@@ -9,6 +9,7 @@ const purple = '#b700ff';
 
 const background_color = '#e3e3e3';
 const grid_line_color = '#b5b5b5';
+const projection_color = '#8f8f8f';
 
 const block_size = 30;
 const grid_line_width = 2;

@@ -63,6 +63,7 @@ class Game {
             }
         }
 
+        this.showProjection();
         this.current_piece.show();
     }
 
@@ -189,6 +190,36 @@ class Game {
             }
         }
         return true;
+    }
+
+    showProjection() {
+        let cfg = this.current_piece.cfgs[this.current_piece.current_cfg_idx];
+        let x = this.current_piece.x;
+        let projected_y = this.current_piece.y;
+
+        let projection_found = false
+        while(true) {
+            for (let i = 0; i < cfg.length; ++i) {
+                let cfg_x = x + cfg[i][0];
+                let cfg_y = projected_y + cfg[i][1];
+                
+                /* we place projects at either:
+                    1. bottom of the screen
+                    2. right above a colored grid (thus cfg_y + 1)
+                */
+                if (cfg_y >= this.grid_height -1 || this.grid[cfg_y + 1][cfg_x].color != background_color) {
+                    projection_found = true;
+                    break;
+                }
+            }
+
+            if (projection_found) {
+                break;
+            }
+            ++projected_y;
+        }
+
+        this.current_piece.project(x, projected_y);
     }
 }
 
