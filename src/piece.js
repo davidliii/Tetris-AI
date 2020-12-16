@@ -43,10 +43,70 @@ class Piece {
 
 class I_Piece extends Piece{
     constructor() {
-        super(3, 3);
+        super(3, -1);
 
         this.cfgs = I_PIECE_CFG;
         this.current_cfg_idx = 0;
         this.color = light_blue;
+    }
+}
+
+class O_Piece extends Piece {
+    constructor() {
+        super(3, 0);
+
+        this.cfgs = O_PIECE_CFG;
+        this.current_cfg_idx = 0;
+        this.color = yellow;
+    }
+}
+
+class T_Piece extends Piece {
+    constructor() {
+        super(3, 0);
+
+        this.cfgs = T_PIECE_CFG;
+        this.current_cfg_idx = 0;
+        this.color = purple;
+    }
+}
+
+class S_Piece extends Piece {
+    constructor() {
+        super(3, 0);
+
+        this.cfgs = S_PIECE_CFG;
+        this.current_cfg_idx = 0;
+        this.color = green;
+    }
+}
+
+class Z_Piece extends Piece {
+    constructor() {
+        super(3, 0);
+
+        this.cfgs = Z_PIECE_CFG;
+        this.current_cfg_idx = 0;
+        this.color = red;
+    }
+}
+
+class L_Piece extends Piece {
+    constructor() {
+        super(3, 0);
+
+        this.cfgs = L_PIECE_CFG;
+        this.current_cfg_idx = 0;
+        this.color = orange;
+    }
+}
+
+class J_Piece extends Piece {
+    constructor() {
+        super(3, 0);
+
+        this.cfgs = J_PIECE_CFG;
+        this.current_cfg_idx = 0;
+        this.color = dark_blue;
     }
 }

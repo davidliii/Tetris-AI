@@ -4,7 +4,7 @@ class Game {
         this.grid_height = 22;
         this.grid = this.makeGrid();
 
-        this.current_piece = new I_Piece();
+        this.current_piece = new L_Piece();
         this.next_piece;
     }
 
@@ -58,7 +58,7 @@ class Game {
             let x = cfg[i][0] + this.current_piece.x;
             let y = cfg[i][1] + this.current_piece.y;
 
-            if (x >= this.grid_width || x <= -1) {
+            if (x >= this.grid_width || x <= -1 || y <= -1) {
                 return false;
             }
 
