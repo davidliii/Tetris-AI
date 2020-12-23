@@ -46,8 +46,8 @@ subtract that value from the total number of empty cells, yielding the holes.
 When choosing states, we want to minimize the number of holes present. 
 Here are some examples of hole-counting:
 <p align="center">
-    <img src="assets/images/hole-ex-1.PNG" width=450 />
-    <img src="assets/images/hole-ex-2.PNG" width=450 height=727/>  
+    <img src="assets/images/hole-ex-1.PNG" width=400 />
+    <img src="assets/images/hole-ex-2.PNG" width=400 />  
 </p>
 
 
