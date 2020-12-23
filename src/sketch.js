@@ -12,6 +12,6 @@ function setup() {
 
 function draw() {
     background('#ffffff');
-    game.update();
+    game.update2();
     game.show();
 }

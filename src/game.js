@@ -4,13 +4,19 @@ class Game {
         this.grid_height = 22;
         this.grid = this.makeGrid();
 
-        //this.current_piece = new L_Piece();
         this.current_piece = this.getRandomPiece();
         this.next_piece = this.getRandomPiece();
 
         this.fall_rate = 750;
         this.secondsPassed = 0;
         this.start_t = this.getTime();
+        this.score = 0;
+
+        this.player = new Player();
+        this.moves = [];
+        this.usingAI = false;
+
+        this.createRandomState(10);
     }
 
     getTime() {
@@ -18,16 +24,26 @@ class Game {
     }
 
     update() {
-        let dx = keys[3] - keys[2];
-        let dy = keys[1];
-        let rotate_dir = keys[0]
+        let dx, dy, rotate_dir;
+
+        if (this.usingAI) {
+
+        }
+
+        else {
+            dx = keys[3] - keys[2];
+            dy = keys[1];
+            rotate_dir = keys[0]
+        }
 
         let curr_t = this.getTime();
         let time_elapsed = curr_t - this.start_t;
         if (time_elapsed >= this.fall_rate) {
             this.start_t = curr_t;
-            // update move to go down in next show()
-            dy += 1; 
+            if (!this.usingAI) {
+                // update move to go down in next show()
+                dy += 1; 
+            }
             
             // check if piece needs to be locked
             let isLocked = this.checkPieceLocked();
@@ -40,20 +56,29 @@ class Game {
             // check for rows to be cleared
             let rowsToClear = this.getFilledRows();
             this.clearRows(rowsToClear)
+            this.score += rowsToClear.length;
 
-        }
-
-        for (let i = 0; i < this.grid.length; ++i) {
-            for (let j = 0; j < this.grid[i].length; ++j) {
-                this.grid[i][j].update();
+            if (isLocked && this.usingAI) {
+                // look for optimal sequence of moves to move piece to best location
+                this.moves = this.player.getMoves(this.grid, this.current_piece);
             }
         }
-        
+
         this.current_piece.update(dx, dy, rotate_dir, this.grid_width, this.grid_height);
         if (!this.checkValid()) {
             this.current_piece.update(-dx, -dy, -rotate_dir, this.grid_width, this.grid_height);
         }
         keys = [0, 0, 0, 0];
+    }
+
+    update2() {
+        let curr_t = this.getTime();
+        let time_elapsed = curr_t - this.start_t;
+        if (time_elapsed >= this.fall_rate) {
+            this.start_t = curr_t;
+            let state = this.player.convertToState(this.grid)
+            this.player.evaluateState(state);
+        }
     }
 
     show() {
@@ -63,13 +88,14 @@ class Game {
             }
         }
 
-        this.showProjection();
+        //this.showProjection();
         this.current_piece.show();
+        this.showNextPiece();
+        this.showScore();
     }
 
     makeGrid() {
         let grid = [];
-        
         for (let i = 0; i < this.grid_height; ++i) {
             let grid_row = [];
             for (let j = 0; j < this.grid_width; ++j) {
@@ -80,6 +106,31 @@ class Game {
         }
 
         return grid;
+    }
+
+    createRandomState(numBlocks) {
+        // sets up grid in random state (given number blocks to drop)
+        for (let i = 0; i < numBlocks; ++i) {
+            let x = Math.floor(Math.random() * 6 -3); // random x between 3 and -3
+            let num_rotations = Math.floor(Math.random() * 4); // random x between 0 and 3
+
+            this.current_piece = this.getRandomPiece();
+            this.current_piece.x += x;
+            this.current_piece.current_cfg_idx = num_rotations % this.current_piece.cfgs.length;
+            
+
+            while (!this.checkPieceLocked()) {
+                this.current_piece.y += 1;
+            }
+
+            this.lockPiece();
+            this.current_piece = this.next_piece;
+            this.next_piece = this.getRandomPiece();
+            
+            // check for rows to be cleared
+            let rowsToClear = this.getFilledRows();
+            this.clearRows(rowsToClear);
+        }
     }
 
     checkValid() {
@@ -220,6 +271,18 @@ class Game {
         }
 
         this.current_piece.project(x, projected_y);
+    }
+
+    showNextPiece() {
+        strokeWeight(2);
+        stroke("#000000");
+        fill("#ffffff")
+        square(400, 10, 150);
+        this.next_piece.preview();
+    }
+
+    showScore() {
+
     }
 }
 

@@ -1,0 +1,26 @@
+* {
+  font-family: 'Raleway', sans-serif;
+}
+
+html, body {
+    height: 100%;
+  }
+  
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  background-color: #8283af;
+}
+
+.p5Canvas {
+    position: relative;
+    left: 1%;
+    padding: 5;
+    border: solid;
+    border-width: 2px;
+    margin-top: 20px;
+  
+    background-color: white;
+    border-color: black;
+  }
