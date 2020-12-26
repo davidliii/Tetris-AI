@@ -15,3 +15,11 @@ const block_size = 30;
 const grid_line_width = 2;
 
 const fall_dist = 100;
+
+function cantor(k1, k2) { // pairing 
+    return 0.5 * (k1+k2) * (k1 + k2 + 1) + k2
+}
+
+function triple_pair(a, b, c) {
+    return cantor(cantor(a, b), c); 
+}

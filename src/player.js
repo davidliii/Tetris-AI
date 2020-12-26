@@ -53,22 +53,117 @@ class Player {
         console.log(str);
     }
 
-    getMoves(gridState, currentPiece) {
-        /* 
-        strategy:
-        1. use flood fill to determine surface upon which pieces can land
-        2. determine all possible locations/orientations where pieces can land 
-           and lock
-        3. compute the cost of each state where pieces land and lock
-        4. sort states in order of increasing cost
-        5. go through states and using pathing finding to get from piece lock 
-           location to spawn location
-        6. parse the path and return it in reverse if a path is found, otherwise 
-           move to next piece
-        */
+    // state iteration & move selection
 
+    getMoves(grid_state, current_piece) {
+        // for now just show possible ending locations for curent piece
+        // now get just the end states from straight up dropping
+        let state = this.convertToState(grid_state);
+        let end_states = [] // list of [x, y, cfg_idx]
+        let end_state_hashes = [];
+
+        function isStateFound(x, y, i) {
+            let pair = triple_pair(x, y, i);
+            console.log(pair);
+
+            return end_state_hashes.includes(pair);
+        }
+
+        for (let i = 0; i < current_piece.cfgs.length; ++i) { // iterate orientations
+            // determine drop bounds
+            let x_min = current_piece.x;
+            let x_max = current_piece.x;
+            let start_y = current_piece.y;
+
+            while (this.checkValid(current_piece, i, x_min, start_y, state)) {
+                --x_min;
+            }
+            ++x_min;
+            while (this.checkValid(current_piece, i, x_max, start_y, state)) {
+                ++x_max;
+            }
+            --x_max;
+            
+
+            // start dropping
+            for (let x = x_min; x <= x_max; ++x) {
+                let y = start_y;
+                while (!this.checkPieceLocked(current_piece, i, x, y, state)) {
+                    y += 1;
+                }
+
+                // rotate/shifts and compare with current best end state + path
+                // TODO: keep track of only min cost state and find path back to spawn location
+                
+                for (let j = 0; j < current_piece.cfgs.length; ++j) {
+                    let start_x = x;
+                    while (this.checkValid(current_piece, j, start_x, y, state) && 
+                    this.checkPieceLocked(current_piece, j, start_x, y, state)) {
+                        if (!isStateFound(start_x, y, j)) {
+                            end_states.push([start_x, y, j]);
+                            end_state_hashes.push(triple_pair(start_x, y, j));
+                        }
+                        ++start_x;
+                    }
+    
+                    start_x = x
+                    while (this.checkValid(current_piece, j, start_x, y, state) && 
+                    this.checkPieceLocked(current_piece, j, start_x, y, state)) {
+                        if (!isStateFound(start_x, y, j)) {
+                            end_states.push([start_x, y, j]);
+                            end_state_hashes.push(triple_pair(start_x, y, j));
+                        }
+                        --start_x;
+                    }
+                }
+            }
+        }
+        return end_states;
     }
 
+    checkValid(current_piece, idx, px, py, state) {
+        let cfg = current_piece.cfgs[idx];
+        for (let i = 0; i < cfg.length; ++i) {
+            let x = cfg[i][0] + px;
+            let y = cfg[i][1] + py;
+
+            if (x >= state[0].length || x <= -1 || y <= -1) {
+                return false;
+            }
+
+            if (y >= state.length) {
+                return false;
+            }
+
+            if (state[y][x] != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    checkPieceLocked(current_piece, idx, px, py, state) {
+        let cfg = current_piece.cfgs[idx];
+        for (let i = 0; i < cfg.length; ++i) {
+            let x = cfg[i][0] + px;
+            let y = cfg[i][1] + py;
+
+            if (y == state.length - 1) { // reached bottom of screen
+                return true;
+            }
+
+            if (state[y+1][x] != 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    
+
+    // Cost function
     evaluateState(state) {
         let n_filled = this.getNumFilledBlocks(state);
         let heights = this.getHeights(state);
@@ -77,12 +172,16 @@ class Player {
         let avg_h = this.getAvgHeight(heights);
         let var_h = this.getHeightVariance(heights);
 
+
+        console.log(n_holes);
         return this.a * n_holes + 
                this.b * n_filled + 
                this.c * avg_h +
                this.d * var_h;
     }
 
+
+    // State feature extraction
     getNumHoles(state, num_filled) {
         let max_y = state.length;
         let max_x = state[0].length;
@@ -101,22 +200,17 @@ class Player {
             return valid_adjacent;
         }
 
-        function cantor(cell) { // pairing function because js element-finding sucks
-            let [k1, k2] = cell;
-            return 0.5 * (k1+k2) * (k1 + k2 + 1) + k2
-        }
-
         // bfs to find holes
         let queue = [];
         let visited = new Set();
-        visited.add(cantor([0, 0]));
+        visited.add(cantor(0, 0));
         queue.push([0, 0]);
 
         while (queue.length != 0) {
             let [x, y] = queue.shift();
             let adjacent = getAdjacent([x, y]);
             for (let i = 0; i < adjacent.length; ++i) {
-                let c_value = cantor(adjacent[i])
+                let c_value = cantor(adjacent[i][0], adjacent[i][1])
                 if (!visited.has(c_value)) {
                     visited.add(c_value);
                     queue.push(adjacent[i]);
@@ -171,5 +265,9 @@ class Player {
             }
         }
         return num_filled;
+    }
+
+    getCompletedRows(state) {
+        
     }
 }

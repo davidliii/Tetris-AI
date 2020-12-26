@@ -16,7 +16,12 @@ class Game {
         this.moves = [];
         this.usingAI = false;
 
-        this.createRandomState(10);
+
+        // testing stuff
+        // this.createRandomState(10);
+        this.parseGameState(game_state_2);
+        this.i = 0;
+        this.moves = this.player.getMoves(this.grid, this.current_piece);
     }
 
     getTime() {
@@ -65,19 +70,28 @@ class Game {
         }
 
         this.current_piece.update(dx, dy, rotate_dir, this.grid_width, this.grid_height);
-        if (!this.checkValid()) {
-            this.current_piece.update(-dx, -dy, -rotate_dir, this.grid_width, this.grid_height);
-        }
+        // if (!this.checkValid()) {
+        //     this.current_piece.update(-dx, -dy, -rotate_dir, this.grid_width, this.grid_height);
+        // }
         keys = [0, 0, 0, 0];
     }
 
     update2() {
         let curr_t = this.getTime();
         let time_elapsed = curr_t - this.start_t;
+        
         if (time_elapsed >= this.fall_rate) {
             this.start_t = curr_t;
-            let state = this.player.convertToState(this.grid)
-            this.player.evaluateState(state);
+            this.i += 1;
+            if (this.i == this.moves.length) {
+                this.i = 0;
+            }
+            console.log(this.moves[this.i]);
+            console.log(this.moves)
+            console.log(this.i);
+
+            // let state = this.player.convertToState(this.grid)
+            // this.player.evaluateState(state);
         }
     }
 
@@ -92,6 +106,19 @@ class Game {
         this.current_piece.show();
         this.showNextPiece();
         this.showScore();
+    }
+
+    show2() {
+        for (let i = 0; i < this.grid.length; ++i) {
+            for (let j = 0; j < this.grid[i].length; ++j) {
+                this.grid[i][j].show();
+            }
+        }
+
+        let x = this.moves[this.i][0];
+        let y = this.moves[this.i][1];
+        let orientation = this.moves[this.i][2];
+        this.current_piece.showPossible(x, y, orientation);
     }
 
     makeGrid() {
@@ -283,6 +310,23 @@ class Game {
 
     showScore() {
 
+    }
+
+    parseGameState(game_state) {
+        for (let i = 0; i < game_state.length - 1; ++i) {
+            let [x, piece_cls, orientation] = game_state[i];
+            this.current_piece = new piece_cls();
+            this.current_piece.x = x;
+            this.current_piece.current_cfg_idx = orientation;
+
+            while (!this.checkPieceLocked()) {
+                this.current_piece.y += 1;
+            }
+
+            this.lockPiece();
+        }
+
+        this.current_piece = new game_state[game_state.length - 1][1]();
     }
 }
 

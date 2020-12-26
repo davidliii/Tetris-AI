@@ -6,14 +6,20 @@ class Piece {
         this.cfgs;
         this.current_cfg_idx;
         this.color;
-
-        this.set = false;
     }
 
-    update(dx, dy, rotate_dir) {
+    update(dx, dy, rotate_dir, width) {
         this.y += dy;
         this.rotate(rotate_dir);
         this.x += dx;
+
+        let cfg = this.cfgs[this.current_cfg_idx];
+        for (let i = 0; i < cfg.length; ++i) {
+            let x = cfg[i][0] + this.x
+
+            if (x >= width) { --this.x;}
+            if (x < 0) { ++this.x;}
+        }
     }
 
     show() {
@@ -58,6 +64,20 @@ class Piece {
         }
     }
 
+    showPossible(px, py, orientation) {
+        let cfg = this.cfgs[orientation];
+        for (let i = 0; i < cfg.length; ++i) {
+            let x = cfg[i][0];
+            let y = cfg[i][1];
+            strokeWeight(grid_line_width);
+            stroke(grid_line_color);
+            fill(this.color);
+            square((px + x) * block_size + grid_line_width, 
+                   (py + y) * block_size + grid_line_width, 
+                   block_size);
+        }
+    }
+
     rotate(direction) {
         this.current_cfg_idx += direction;
         if (this.current_cfg_idx >= this.cfgs.length) {
@@ -71,7 +91,7 @@ class Piece {
 
 class I_Piece extends Piece{
     constructor() {
-        super(3, -1);
+        super(3, 0);
 
         this.cfgs = I_PIECE_CFG;
         this.current_cfg_idx = 0;
