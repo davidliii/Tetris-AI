@@ -94,10 +94,10 @@ Here is the state expansion algorithm in action:
 
 1. Initial block placements are determined and dropped vertically in every
 possible orientation
-<div style="margin: 0 auto; text-align: center">
+<div style="margin: 0 auto; text-align: center;">
     <div style="display: inline-block; vertical-align: top; margin-right: 10px">
         <p align="center">
-            <img src="assets/videos/initial-selector.gif" width=300 />
+            <img src="assets/videos/initial-selector.gif" width=250 />
         </p>
         <p align="center">
             <i> Initial Block Placements </i>
@@ -105,21 +105,21 @@ possible orientation
     </div>
     <div style="display: inline-block; vertical-align: top; margin-left: 10px">
         <p align="center">
-                <img src="assets/videos/drop-locations.gif" width=300 />
+                <img src="assets/videos/drop-locations.gif" width=250 />
         </p>
         <p align="center">
             <i> Drop Locations </i>
         </p>
     </div>
-</div>
+</p>
 
 2. After blocks are dropped, any additional horizontal/rotational moves are made 
 and are considered in end-state selection. This makes moves such as sliding/T-spinning
 possible for the AI
-<div style="margin: 0 auto; text-align: center">
+<div style="margin: 0 auto; text-align: center;">
     <div style="display: inline-block; vertical-align: top; margin-right: 10px">
         <p align="center">
-            <img src="assets/videos/slide.gif" width=300 />
+            <img src="assets/videos/slide.gif" width=250 />
         </p>
         <p align="center">
             <i> Sliding from a soft drop </i>
@@ -127,7 +127,7 @@ possible for the AI
     </div>
     <div style="display: inline-block; vertical-align: top; margin-left: 10px">
         <p align="center">
-                <img src="assets/videos/t-spin.gif" width=300 />
+                <img src="assets/videos/t-spin.gif" width=250 />
         </p>
         <p align="center">
             <i> T-spin (bottom-right corner) </i>
