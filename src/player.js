@@ -5,12 +5,12 @@ class Player {
         end state. The lower the cost, the higher chance it has to choose a
         given state. A state's cost is computed using the following linear
         combination:
-        a * (# holes) + b * (max column height) + c * (height variance of all columns) + d * (# filled blocks)
+        a * (# holes) + b * (max column height) + c * (height variance of all columns) - d * (# filled rows)
         */
         this.a = 1;
-        this.b = 1;
-        this.c = 1;
-        this.d = 1;
+        this.b = 2;
+        this.c = 2;
+        this.d = 3;
     }
 
     convertToState(grid) {
@@ -64,13 +64,23 @@ class Player {
 
         function isStateFound(x, y, i) {
             let pair = triple_pair(x, y, i);
-            console.log(pair);
-
             return end_state_hashes.includes(pair);
         }
 
+
+        let curr_best_score = -1;
+        let curr_best_state = null;
+        let curr_best_moves = '';
+        // how moves are written and parsed:
+        // '#' - desired orientation
+        // 'r' - right shift
+        // 'l' - left shift
+        // 'd' - down 
+
         for (let i = 0; i < current_piece.cfgs.length; ++i) { // iterate orientations
-            // determine drop bounds
+            let initial_orientation_move = i.toString() // orientation
+
+            // determine drop starting bounds
             let x_min = current_piece.x;
             let x_max = current_piece.x;
             let start_y = current_piece.y;
@@ -87,38 +97,107 @@ class Player {
 
             // start dropping
             for (let x = x_min; x <= x_max; ++x) {
+                // record horizontal moves
+                let num_shifts = current_piece.x - x;
+                let shift_moves = '';
+                if (num_shifts > 0) {
+                    shift_moves = 'l'.repeat(Math.abs(num_shifts));
+                }
+                else if (num_shifts < 0) {
+                    shift_moves = 'r'.repeat(Math.abs(num_shifts));
+                }
+
                 let y = start_y;
                 while (!this.checkPieceLocked(current_piece, i, x, y, state)) {
                     y += 1;
                 }
-
-                // rotate/shifts and compare with current best end state + path
-                // TODO: keep track of only min cost state and find path back to spawn location
                 
-                for (let j = 0; j < current_piece.cfgs.length; ++j) {
+                // record down moves
+                let down_moves = 'd'.repeat(Math.abs(start_y - y));
+
+                // at this point we have dropped all the way possible
+                // now we try single/no rotations in drop zone
+                for (let j = 0; j <= 1; ++j) {
+                    let orientation = j + i;
+                    if (orientation == current_piece.cfgs.length) {
+                        orientation = 0;
+                    }
+                    
+                    let new_orientation_move = orientation.toString();
+                    // here we are doing shifts after rotating
                     let start_x = x;
-                    while (this.checkValid(current_piece, j, start_x, y, state) && 
-                    this.checkPieceLocked(current_piece, j, start_x, y, state)) {
-                        if (!isStateFound(start_x, y, j)) {
-                            end_states.push([start_x, y, j]);
-                            end_state_hashes.push(triple_pair(start_x, y, j));
+
+                    // shift right
+                    while (this.checkValid(current_piece, orientation, start_x, y, state) && 
+                    this.checkPieceLocked(current_piece, orientation, start_x, y, state)) {
+                        if (!isStateFound(start_x, y, orientation)) {
+                            end_states.push([start_x, y, orientation]);
+                            end_state_hashes.push(triple_pair(start_x, y, orientation));
+
+                            let new_state = this.addToState(state, current_piece, orientation, start_x, y);
+                            let new_state_score = this.evaluateState(new_state);
+
+                            if (curr_best_score == -1 || new_state_score < curr_best_score) {
+                                curr_best_score = new_state_score;
+                                curr_best_state = new_state;
+                                curr_best_moves = initial_orientation_move + 
+                                                  shift_moves + down_moves + 
+                                                  new_orientation_move +
+                                                  'r'.repeat(Math.abs(start_x - x));
+                            }
                         }
                         ++start_x;
                     }
     
                     start_x = x
-                    while (this.checkValid(current_piece, j, start_x, y, state) && 
-                    this.checkPieceLocked(current_piece, j, start_x, y, state)) {
-                        if (!isStateFound(start_x, y, j)) {
-                            end_states.push([start_x, y, j]);
-                            end_state_hashes.push(triple_pair(start_x, y, j));
+
+                    // shift left
+                    while (this.checkValid(current_piece, orientation, start_x, y, state) && 
+                    this.checkPieceLocked(current_piece, orientation, start_x, y, state)) {
+                        if (!isStateFound(start_x, y, orientation)) {
+                            end_states.push([start_x, y, orientation]);
+                            end_state_hashes.push(triple_pair(start_x, y, orientation));
+
+                            let new_state = this.addToState(state, current_piece, orientation, start_x, y);
+                            let new_state_score = this.evaluateState(new_state);
+
+                            if (curr_best_score == -1 || new_state_score < curr_best_score) {
+                                curr_best_score = new_state_score;
+                                curr_best_state = new_state;
+                                curr_best_moves = initial_orientation_move + 
+                                                  shift_moves + down_moves + 
+                                                  new_orientation_move +
+                                                  'l'.repeat(Math.abs(start_x - x));
+                            }
                         }
                         --start_x;
                     }
                 }
             }
         }
-        return end_states;
+
+        return curr_best_moves;
+    }
+
+    addToState(state, current_piece, cfg_idx, px, py) {
+        let cfg = current_piece.cfgs[cfg_idx];
+        
+        let new_state = [];
+        for (let i = 0; i < state.length; ++i) {
+            let row = []
+            for (let j = 0; j < state[i].length; ++j) {
+                row.push(state[i][j]);
+            }
+
+            new_state.push(row);
+        }
+        
+        for (let i = 0; i < cfg.length; ++i) {
+            let x = px + cfg[i][0];
+            let y = py + cfg[i][1];
+            new_state[y][x] = 1;
+        }
+        return new_state;
     }
 
     checkValid(current_piece, idx, px, py, state) {
@@ -165,19 +244,17 @@ class Player {
 
     // Cost function
     evaluateState(state) {
-        let n_filled = this.getNumFilledBlocks(state);
+        let n_filled = this.getCompletedRows(state);
         let heights = this.getHeights(state);
 
         let n_holes = this.getNumHoles(state, n_filled);
         let avg_h = this.getAvgHeight(heights);
         let var_h = this.getHeightVariance(heights);
 
-
-        console.log(n_holes);
         return this.a * n_holes + 
-               this.b * n_filled + 
-               this.c * avg_h +
-               this.d * var_h;
+               this.b * avg_h + 
+               this.c * var_h -
+               this.d * n_filled;
     }
 
 
@@ -268,6 +345,21 @@ class Player {
     }
 
     getCompletedRows(state) {
-        
+        let n = 0;
+        for (let i = 0; i < state.length; ++i) {
+            let backgroundFound = false;
+            for (let j = 0; j < state[i].length; ++j) {
+                if (state[i][j] == 0) {
+                    backgroundFound = true;
+                    break;
+                }
+            }
+
+            if (!backgroundFound) {
+                n += 1;
+            }
+        }
+
+        return n; 
     }
 }

@@ -8,7 +8,7 @@ class Piece {
         this.color;
     }
 
-    update(dx, dy, rotate_dir, width) {
+    update(dx, dy, rotate_dir) {
         this.y += dy;
         this.rotate(rotate_dir);
         this.x += dx;
@@ -16,9 +16,6 @@ class Piece {
         let cfg = this.cfgs[this.current_cfg_idx];
         for (let i = 0; i < cfg.length; ++i) {
             let x = cfg[i][0] + this.x
-
-            if (x >= width) { --this.x;}
-            if (x < 0) { ++this.x;}
         }
     }
 

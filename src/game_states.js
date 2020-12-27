@@ -17,3 +17,10 @@ const game_state_2 = [
     
     [3, T_Piece, 0]
 ]
+
+// better for t-spins
+const game_state_3 = [
+    [2, I_Piece, 0],[3, S_Piece, 0],[-1, O_Piece, 0], [7, L_Piece, 0],
+
+    [3, T_Piece, 0]
+]

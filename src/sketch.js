@@ -12,9 +12,9 @@ function setup() {
 
 function draw() {
     background('#ffffff');
-    // game.update2();
-    // game.show2();
+    game.update2();
+    game.show2();
 
-    game.update();
-    game.show();
+    // game.update();
+    // game.show();
 }
