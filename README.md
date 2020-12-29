@@ -17,7 +17,7 @@ learning in here, just some good ol' search.
 
 ### Try it here
 You can clone the repo and run the index.html locally or access it through
-this [link]() (TODO add link).
+this [link](https://davidliii.github.io/Tetris-AI/)
 
 ## How It Works
 The goal here is for an AI to play Tetris. I formalized the game as a
@@ -65,3 +65,11 @@ evaluateState(state) {
                this.d * n_filled;
 }
 ```
+## Performance
+On average, the current implementation clears around 100 lines per game.
+
+## Future Progress
+The current implementation is greedy. It chooses the best set of moves for the 
+piece that is currently being played and does not look ahead to possible states
+involving the next piece. A deeper search can be implemented and may improve
+performance.

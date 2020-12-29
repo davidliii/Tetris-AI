@@ -17,6 +17,7 @@ class Game {
         this.start_t = this.getTime();
         
         this.score = 0;
+        this.best_score = 0;
 
         // AI-control elements
         this.usingAI = true;
@@ -50,6 +51,12 @@ class Game {
 
         this.move_idx = 0;
         this.moves = this.player.getMoves(this.grid, this.current_piece);
+
+        if (this.score > this.best_score) {
+            document.getElementById('bestScoreValue').innerHTML = this.score.toString();
+            this.best_score = this.score;
+        }
+        this.score = 0;
     }
 
     /**

@@ -1,7 +1,7 @@
 var game;
 
 function setup() {
-    createCanvas(600, 1000);
+    createCanvas(600, 800);
     background('#ffffff');
     game = new Game();
 }
