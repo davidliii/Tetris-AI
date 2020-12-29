@@ -26,11 +26,6 @@ class Piece {
         this.y += dy;
         this.rotate(rotate_dir);
         this.x += dx;
-
-        let cfg = this.cfgs[this.current_cfg_idx];
-        for (let i = 0; i < cfg.length; ++i) {
-            let x = cfg[i][0] + this.x
-        }
     }
 
     /**

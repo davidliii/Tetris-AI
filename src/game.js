@@ -19,7 +19,7 @@ class Game {
         this.score = 0;
 
         // AI-control elements
-        this.usingAI = false;
+        this.usingAI = true;
         this.ai_rate = 50;
         this.player = new Player();
 
