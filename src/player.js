@@ -12,10 +12,10 @@ class Player {
      * a * (# holes) + b * (max column height) + c * (height variance of all columns) - d * (# filled rows) 
      */
     constructor() {
-        this.a = 1;
-        this.b = 3;
-        this.c = 2;
-        this.d = 3;
+        this.a = 3;
+        this.b = 1;
+        this.c = 1;
+        this.d = 2;
     }
 
     /**
@@ -274,7 +274,7 @@ class Player {
         let n_filled = this.getCompletedRows(state);
         let heights = this.getHeights(state);
 
-        let n_holes = this.getNumHoles(state, n_filled);
+        let n_holes = this.getNumHoles2(state);
         let avg_h = this.getAvgHeight(heights);
         let var_h = this.getHeightVariance(heights);
 
@@ -411,5 +411,31 @@ class Player {
         }
 
         return n; 
+    }
+
+    /**
+     * Returns the number of holes in a game state, where the number of 
+     * holes here are defined to be any empty gridspace with a filled
+     * gridspace above it as well as the empty gridspaces below it (tunnels)
+     * @param {Array.<Array.<Number>>} state - Game state
+     * @returns {Array.<Number>}             - Number of holes in state
+     */
+    getNumHoles2(state) {
+        let num_rows = state.length;
+        let num_cols = state[0].length;
+
+        let n_holes = 0;
+        for (let i = 1; i < num_rows; ++i) {
+            for (let j = 0; j < num_cols; ++j) {
+                if (state[i][j] == 0 && state[i-1][j] == 1) {
+                    let curr_row = i;
+                    while (curr_row < num_rows && state[curr_row][j] == 0) {
+                        ++n_holes;
+                        ++curr_row;
+                    }
+                }
+            }
+        }
+        return n_holes;
     }
 }

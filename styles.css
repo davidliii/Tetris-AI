@@ -24,3 +24,33 @@ body {
     background-color: white;
     border-color: black;
   }
+
+.scoreDisplay {
+  font-size: 200%;
+}
+
+.scoreSubsection {
+  border: solid;
+  border-width: 2px;
+  border-color: black;
+  margin-top: 20px;
+  background-color: white;
+  padding: 10px 10px;
+  height: 100;
+  width: 300;
+  text-align: center;
+  font-size: 150%;
+}
+
+.parameterSubsection {
+  border: solid;
+  border-width: 2px;
+  border-color: black;
+  margin-top: 20px;
+  background-color: white;
+  padding: 10px 10px;
+  height: 300;
+  width: 300;
+  text-align: center;
+  font-size: 150%;
+}

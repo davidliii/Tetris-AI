@@ -19,9 +19,34 @@ class Game {
         this.score = 0;
 
         // AI-control elements
-        this.usingAI = true;
+        this.usingAI = false;
         this.ai_rate = 50;
         this.player = new Player();
+
+        this.move_idx = 0;
+        this.moves = this.player.getMoves(this.grid, this.current_piece);
+    }
+
+    /**
+     * Checks to see if game is finished
+     * @returns {Boolean} - Whether or not game is over
+     */
+    isGameOver() {
+        for (let i = 0; i < this.grid_width; ++i) {
+            if (this.grid[1][i].color != background_color) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Resets game elements
+     */
+    resetGame() {
+        this.grid = this.makeGrid();
+        this.current_piece = this.getRandomPiece();
+        this.next_piece = this.getRandomPiece();
 
         this.move_idx = 0;
         this.moves = this.player.getMoves(this.grid, this.current_piece);
@@ -67,6 +92,12 @@ class Game {
             
             if (this.checkPieceLocked()) {
                 this.lockPiece();
+
+                if (this.isGameOver()) {
+                    this.resetGame();
+                    return;
+                }
+
                 this.current_piece = this.next_piece;
                 this.next_piece = this.getRandomPiece();
             }
@@ -95,6 +126,12 @@ class Game {
 
             if (this.move_idx == this.moves.length) {
                 this.lockPiece();
+
+                if (this.isGameOver()) {
+                    this.resetGame();
+                    return;
+                }
+
                 this.current_piece = this.next_piece;
                 this.next_piece = this.getRandomPiece();
 
@@ -365,7 +402,7 @@ class Game {
     }
 
     showScore() {
-
+        document.getElementById('scoreValue').innerHTML = this.score.toString();
     }
 
     /**
