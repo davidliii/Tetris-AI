@@ -1,3 +1,10 @@
+/**
+ * Configurations of each tetromino piece
+ * Each configuration is a list of lists, where the inner 
+ * list contains the [x, y] coordinate of each block in 
+ * the piece
+ */
+
 const I_PIECE_CFG = [
     [
         [0, 1], [1, 1], [2, 1], [3, 1]

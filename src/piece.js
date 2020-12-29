@@ -1,4 +1,12 @@
+/**
+ * Parent class for all tetrominoes
+ */
 class Piece {
+    /**
+     * Create a piece
+     * @param {Number} x - Starting x-coordinate of piece
+     * @param {Number} y - Starting y-coordinate of piece
+     */
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -8,6 +16,12 @@ class Piece {
         this.color;
     }
 
+    /**
+     * Moves a piece
+     * @param {Number} dx         - Horizontal offset
+     * @param {Number} dy         - Vertical offset
+     * @param {Number} rotate_dir - Rotational offset (either 1 or -1)
+     */
     update(dx, dy, rotate_dir) {
         this.y += dy;
         this.rotate(rotate_dir);
@@ -19,6 +33,9 @@ class Piece {
         }
     }
 
+    /**
+     * Displays piece on canvas
+     */
     show() {
         let cfg = this.cfgs[this.current_cfg_idx];
         for (let i = 0; i < cfg.length; ++i) {
@@ -33,6 +50,9 @@ class Piece {
         }
     }
 
+    /**
+     * Shows piece in the "next piece" Location
+     */
     preview() {
         let cfg = this.cfgs[this.current_cfg_idx];
         for (let i = 0; i < cfg.length; ++i) {
@@ -47,6 +67,11 @@ class Piece {
         }
     }
 
+    /**
+     * Shows future drop location of the piece
+     * @param {Number} px - x-coordinate of projection 
+     * @param {Number} py - y-coordinate of projection
+     */
     project(px, py) {
         let cfg = this.cfgs[this.current_cfg_idx];
         for (let i = 0; i < cfg.length; ++i) {
@@ -60,7 +85,12 @@ class Piece {
                    block_size);
         }
     }
-
+    /**
+     * Shows future drop location of the piece
+     * @param {Number} px - x-coordinate of piece
+     * @param {Number} py - y-coordinate of piece
+     * @param {Number} orientation - orientation of piece
+     */
     showPossible(px, py, orientation) {
         let cfg = this.cfgs[orientation];
         for (let i = 0; i < cfg.length; ++i) {
@@ -74,14 +104,16 @@ class Piece {
                    block_size);
         }
     }
-
+    
+    /**
+     * 
+     * @param {Number} direction - Direction to rotate (either 1 or -1)
+     */
     rotate(direction) {
         this.current_cfg_idx += direction;
-        if (this.current_cfg_idx >= this.cfgs.length) {
-            this.current_cfg_idx = 0;
-        }
-        else if (this.current_cfg_idx <= -1) {
-            this.current_cfg_idx = this.cfgs.length - 1;
+        this.current_cfg_idx %= this.cfgs.length;
+        if (this.current_cfg_idx < 0) {
+            this.current_cfg_idx += this.cfgs.length;
         }
     }
 }

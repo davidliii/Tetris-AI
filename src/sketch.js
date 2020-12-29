@@ -1,9 +1,5 @@
 var game;
 
-function preload() {
-    
-}
-
 function setup() {
     createCanvas(600, 1000);
     background('#ffffff');
@@ -12,9 +8,6 @@ function setup() {
 
 function draw() {
     background('#ffffff');
-    game.update2();
-    game.show2();
-
-    // game.update();
-    // game.show();
+    game.update();
+    game.show();
 }
