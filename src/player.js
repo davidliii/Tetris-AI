@@ -9,13 +9,14 @@ class Player {
      * end state. The lower the cost, the higher chance it has to choose a
      * given state. A state's cost is computed using the following linear
      * combination:
-     * a * (# holes) + b * (max column height) + c * (height variance of all columns) - d * (# filled rows) 
+     * a * (# holes) + b * (average column height) + c * (height variance of all columns) - d * (# filled rows) 
      */
     constructor() {
-        this.a = 3;
+        this.a = 2;
         this.b = 1;
         this.c = 1;
-        this.d = 2;
+        this.d = 2.5;
+        this.e = 0.5;
     }
 
     /**
@@ -277,11 +278,13 @@ class Player {
         let n_holes = this.getNumHoles2(state);
         let avg_h = this.getAvgHeight(heights);
         let var_h = this.getHeightVariance(heights);
+        let n_tunnels = this.getNumTunnels(state);
 
         return this.a * n_holes + 
                this.b * avg_h + 
                this.c * var_h -
-               this.d * n_filled;
+               this.d * n_filled+
+               this.e * n_tunnels;
     }
 
     /**
@@ -437,5 +440,36 @@ class Player {
             }
         }
         return n_holes;
+    }
+
+    getNumTunnels(state) {
+        let num_rows = state.length;
+        let num_cols = state[0].length;
+
+        let n_tunnels = 0;
+        for (let i = 1; i < num_rows; ++i) {
+            for (let j = 0; j < num_cols; ++j) {
+                if (state[i][j] == 0) {
+                    if (j == 0) {
+                        if (state[i][j+1] == 1) {
+                            ++n_tunnels;
+                        }
+                    }
+
+                    else if (j == num_cols - 1) {
+                        if (state[i][j-1] == 1) {
+                            ++n_tunnels;
+                        }
+                    }
+
+                    else {
+                        if (state[i][j+1] == 1 && state[i][j-1] == 1) {
+                            ++n_tunnels
+                        }
+                    }
+                }
+            }
+        }
+        return n_tunnels;
     }
 }

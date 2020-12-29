@@ -18,6 +18,8 @@ class Game {
         
         this.score = 0;
         this.best_score = 0;
+        this.scores = [];
+        this.average_score = 0;
 
         // AI-control elements
         this.usingAI = true;
@@ -56,6 +58,9 @@ class Game {
             document.getElementById('bestScoreValue').innerHTML = this.score.toString();
             this.best_score = this.score;
         }
+        this.scores.push(this.score);
+        this.average_score = this.scores.reduce((a, b) => a + b, 0);
+        document.getElementById('averageScoreValue').innerHTML = this.average_score.toString();
         this.score = 0;
     }
 

@@ -37,6 +37,7 @@ and next piece. The state evaluation function is a linear combination of:
 2. Average column height
 3. Column height variance
 4. Number of cleared rows
+5. Number of "tunnel" grids
 
 Mathematically evaluation function defines the cost required to reach the goal state
 from the current state. Cost in Tetris is not extremely intuitive, so it is better
@@ -58,11 +59,13 @@ evaluateState(state) {
         let n_holes = this.getNumHoles2(state);
         let avg_h = this.getAvgHeight(heights);
         let var_h = this.getHeightVariance(heights);
+        let n_tunnels = this.getNumTunnels(state);
 
         return this.a * n_holes + 
                this.b * avg_h + 
                this.c * var_h -
-               this.d * n_filled;
+               this.d * n_filled+
+               this.e * n_tunnels;
 }
 ```
 ## Performance

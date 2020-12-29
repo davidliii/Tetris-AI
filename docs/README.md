@@ -30,6 +30,17 @@ the row gets shifted downwards. Thus the more rows that are filled in a given st
 the more preferable that state is. In the cost evaluation function, this value is
 weighted by a negative value since a higher number of filled rows is better.
 
+### Number of Tunnels
+Using the features described above, there is a scenario where the algorithm will
+fail to perform. When blocks get stacked high enough, tunnels may begin to form
+in the state. Tunnels are empty gridspaces that have filled grids on both sides
+of them. In these states, the AI will continue stacking higher because if it 
+tries to fill a tunnel, while it may clear a row, it creates a significant number
+of holes in the state. A simple fix for that situation would be to weight the 
+number of completed rows in a state with a higher coefficient. However this could
+have unwanted effects, most notably making the algorithm significantly more greedy
+in the search. Thus penalizing states with tunnel grid spaces encourages the AI
+to fill those spaces without being too greedy.
 
 ### State Iteration
 To determine the best sequence of actions the AI should take, it needs to result
