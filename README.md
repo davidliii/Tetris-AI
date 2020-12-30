@@ -69,7 +69,7 @@ evaluateState(state) {
 }
 ```
 ## Performance
-On average, the current implementation clears around 100 lines per game.
+On average, the current implementation clears around 900 lines per game.
 
 ## Future Progress
 The current implementation is greedy. It chooses the best set of moves for the 
