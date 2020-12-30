@@ -58,7 +58,7 @@ class Game {
             this.best_score = this.score;
         }
         this.scores.push(this.score);
-        average_score = this.scores.reduce((a, b) => a + b, 0) / this.scores.length;
+        let average_score = this.scores.reduce((a, b) => a + b, 0) / this.scores.length;
         document.getElementById('averageScoreValue').innerHTML = average_score.toString();
         this.score = 0;
     }
